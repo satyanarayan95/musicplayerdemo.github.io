@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="./style.css">
+    
+</head>
+
+<body>
+    <div class="main">
+        <div class="music_container">
+            <h2 id="title">Dua - Saware</h2>
+            <H3 id="artist">various artists</H3>
+            <div class="img_container">
+                <img src="./img/song-1.jpg" id="cover" alt="1st_img">
+            </div>
+            <audio src="./music/02 Dua - Saware.wav" id="song"></audio>
+            <!-- <video src="./img/(163) charlie love bgm music _ dulquar salman _ charlie bgm _ love bgm music - YouTube.mkv" controls></video> -->
+
+            <!-- progress bar -->
+            <div class="progressbar_container" id="progress_container">
+                <div class="progress_duration_meter">
+                    <div id="current_time">0.00</div>
+                    <div id="duration">0.00</div>
+                </div>
+                <div class="progress_div" id="progress_div">
+                    <div class="progress" id="progress"></div>
+                </div>
+
+            </div>
+            <!-- controls -->
+            <div class="music_controls">
+                <i class="fas fa-backward" id="previous" title="previous"></i>
+                <i class="fas fa-play main_button" id="play" title="play"></i>
+                <i class="fas fa-forward" id="next" title="next"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const title = document.getElementById("title");
+        const artist = document.getElementById("artist");
+        const cover = document.getElementById("cover");
+        const song = document.getElementById("song");
+        const next = document.getElementById("next");
+        const previous = document.getElementById("previous");
+        const play = document.getElementById("play");
+        const music = document.querySelector("audio");
+        const img = document.querySelector("img");
+        let progress = document.getElementById("progress");
+        let total_duration = document.getElementById("duration");
+        let current_time = document.getElementById("current_time");
+        let progress_div = document.getElementById("progress_div");
+        let ismusic = false;
+
+        const songs = [{
+            name: "song-1",
+            title: "Dua - Saware",
+            artist: "various artists",
+        },
+        {
+            name: "song-2",
+            title: "Sooraj Dooba Hai",
+            artist: "various artists",
+        },
+        {
+            name: "song-3",
+            title: "Ambarsariya",
+            artist: "various artists",
+        }
+        ];
+
+
+
+        const loadSong = (songs) => {
+            title.textContent = songs.title;
+            artist.textContent = songs.artist;
+            music.src = "music/" + songs.name + ".wav";
+            img.src = "img/" + songs.name + ".jpg";
+        }
+
+        songIndex = 0;
+
+        const nextSong = () => {
+            songIndex = (songIndex + 1) % songs.length;
+            loadSong(songs[songIndex]);
+            playMusic();
+        }
+        const prevSong = () => {
+            songIndex = (songIndex - 1 + songs.length) % songs.length;
+            loadSong(songs[songIndex]);
+        }
+        music.addEventListener("ended", nextSong);
+        next.addEventListener("click", nextSong);
+        previous.addEventListener("click", prevSong);
+
+        const playMusic = () => {
+            ismusic = true;
+            music.play();
+            play.classList.replace("fa-play", "fa-pause");
+            img.classList.add("anime");
+        }
+
+
+
+        const pauseMusic = () => {
+            ismusic = false;
+            music.pause();
+            play.classList.replace("fa-pause", "fa-play");
+            img.classList.remove("anime");
+        }
+
+
+        // progress in js
+
+        music.addEventListener('timeupdate', (event) => {
+            const { currentTime, duration } = event.srcElement;
+
+            let progress_time = (currentTime / duration) * 100;
+            progress.style.width = `${progress_time}%`;
+
+
+            // music duration update
+
+            let min = Math.floor(duration / 60);
+            let sec = Math.floor(duration % 60);
+            if (duration) {
+                total_duration.textContent = `${min}:${sec}`;
+            }
+
+
+
+            let min_current = Math.floor(currentTime / 60);
+            let sec_current = Math.floor(currentTime % 60);
+            if (currentTime) {
+                current_time.textContent = `${min_current}:${sec_current}`;
+            }
+
+        });
+
+        progress_div.addEventListener("click", (event) => {
+            const { duration } = music;
+
+            let move_progress = (event.offsetX / event.srcElement.clientWidth) * duration;
+            music.currentTime = move_progress;
+        })
+
+        play.addEventListener('click', () => {
+            ismusic ? pauseMusic() : playMusic();
+        })
+
+
+
+
+
+    </script>
+</body>
+
+</html>
